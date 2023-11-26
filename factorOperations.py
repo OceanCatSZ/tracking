@@ -103,6 +103,7 @@ def joinFactors(factors: List[Factor]):
 
     "*** YOUR CODE HERE ***"
     Factor.getAllPossibleAssignmentDicts()
+    #Jason- Will get to this ASAP
     
     #raiseNotDefined()
     "*** END YOUR CODE HERE ***"
