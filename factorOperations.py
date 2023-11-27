@@ -60,6 +60,7 @@ joinFactorsByVariable = joinFactorsByVariableWithCallTracking()
 ########### ########### ###########
 
 def joinFactors(factors: dict):
+    # Jason
     """
     Input factors is a list of factors.  
     
@@ -89,16 +90,17 @@ def joinFactors(factors: dict):
     """
     
 
-    #We turn (factors: dic) into list of factors for easier access
+    # We turn (factors: dic) into list of factors for easier access
     factors = list(factors) 
-    print("factor form: Factor{[unconditioned vars}, {conditioned vars}, [dict(varaible domains] \n", factors)
+    # print("List---factor form: Factor{[unconditioned vars}, {conditioned vars}, [dict(varaible domains] \n", factors)
     
     # Create sets for unconditioned and conditioned variables to create our new factor
     unconditionedVarSet = set()
     conditionedVarSet = set()
 
-    #Assume that all factors have the same domain dictionary per the directions above
+    # Assume that all factors have the same domain dictionary per the directions above
     variableDomainDict = factors[0].variableDomainsDict()
+    # print(variableDomainDict)
     
     # Update each set with the unconditional and conditioned variables from each factor
     for factor in factors:
@@ -106,17 +108,22 @@ def joinFactors(factors: dict):
         conditionedVarSet.update(factor.conditionedVariables())
 
     # The conditional set should not have anything that is in the unconditional set
+    # print(unconditionedVarSet)
+    # print(conditionedVarSet)
     conditionedVarSet = conditionedVarSet - unconditionedVarSet
     
     newFactor = Factor(unconditionedVarSet, conditionedVarSet, variableDomainDict)
     allAssignmentDicts = newFactor.getAllPossibleAssignmentDicts()
     
     for assignmentDict in allAssignmentDicts:
-        # For every combination of the factors (ex: Sun and Wet, Rain and Wet)
+        # print("assignmentDic", assignmentDict)
+        # For every combination of the factors (ex:Sun and Wet, Rain and Wet etc.)
         totalProbability = 1.0  
+        # Initialize to one- multiplication identity
         
         for factor in factors:
-            # Get the probability for each factor and mulitply it together
+            # Get the probability for each factor ex. Sun and multiply it together with existing probability 
+            # print("Factor", factor)
             factorProbability = factor.getProbability(assignmentDict)
             totalProbability =  totalProbability * factorProbability
             
@@ -187,7 +194,46 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        print("original factor", factor)
+        print("variable to eliminate", eliminationVariable)
+        
+        unconditionedVarSet = factor.unconditionedVariables()
+        print("old unconditioned", unconditionedVarSet)
+        print("the string is", eliminationVariable)
+        eliminationVariableSet = {eliminationVariable}
+        print("the set becomes", (eliminationVariableSet))
+        unconditionedVarSet = unconditionedVarSet- (eliminationVariableSet)
+        print("new unconditioned after elimination", unconditionedVarSet)  
+        
+        varDomainDict = factor.variableDomainsDict()
+        print("varDomainDict", varDomainDict)
+      
+        newFactor = Factor(unconditionedVarSet, factor.conditionedVariables(), varDomainDict)
+
+        
+        allAssignmentDicts = factor.getAllPossibleAssignmentDicts()
+        #Get all possible combinations for the old factor
+        for assignmentDict in allAssignmentDicts:
+            # print(assignmentDict)
+            # For every combination of the factors (ex:Sun and Wet, Rain and Wet etc.)
+            totalProbability = 0.0  
+            # Initialize to 0.0- addition identity
+            domainsWithElim = varDomainDict[eliminationVariable]
+            for elimVar in (domainsWithElim):
+                # For every domain with elimVar, we add up the total probability
+                # print("elimVar",elimVar)
+
+                assignmentDict[eliminationVariable] = elimVar
+
+               # Add the probability of this current probability that contains elim to the total
+                # print("elimVarProbability + previousProbability =", totalProbability, "+", factor.getProbability(assignmentDict))
+
+                totalProbability =  totalProbability + factor.getProbability(assignmentDict)
+
+                
+            newFactor.setProbability(assignmentDict, totalProbability)
+
+        return newFactor
         "*** END YOUR CODE HERE ***"
 
     return eliminate
