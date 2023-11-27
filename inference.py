@@ -209,7 +209,7 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
         joinFactorsByVariable
         joinFactors
         """
-
+        callTrackingList = []
         # this is for autograding -- don't modify
         joinFactorsByVariable = joinFactorsByVariableWithCallTracking(callTrackingList)
         eliminate             = eliminateWithCallTracking(callTrackingList)
@@ -219,7 +219,51 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             eliminationOrder = sorted(list(eliminationVariables))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+   
+        # joinFactorsByVariable = joinFactorsByVariableWithCallTracking(callTrackingList)
+        # eliminate = eliminateWithCallTracking(callTrackingList)
+
+        # initialize return variables and the variables to eliminate
+        evidenceVariablesSet = set(evidenceDict.keys())
+        queryVariablesSet = set(queryVariables)
+        
+        currentFactorsList = bayesNet.getAllCPTsWithEvidence(evidenceDict)
+
+        # variable elimination interleaves join and eliminate by iterating over all the hidden variables and 
+        # ...performs a join and eliminate on a single hidden variable before moving on to the next hidden variable
+        for elimVar in eliminationOrder: 
+            # Iterating over all the hidden variables
+            currentFactorsList, resultingFactor =  joinFactorsByVariable(currentFactorsList, elimVar)
+            listUnconditioned = list(resultingFactor.unconditionedVariables())
+            if len(listUnconditioned) > 1:
+                eliminatedFactor = eliminate(resultingFactor, elimVar)
+                queryVariablesSet.update(eliminatedFactor)
+                # THIS LINE ABOVE IS WRONG
+            else:
+                print("In else branch", currentFactorsList)
+                # resultingFactor.
+                currentFactorsList.pop()
+                # POPPING THE WRONG THING ABOVE
+        # currentFactorsList should contain the connected components of the graph now as factors, must join the connected components
+        fullJoint = joinFactors(currentFactorsList)
+        print("full joint", fullJoint)
+
+        # marginalize all variables that aren't query or evidence
+        # incrementallyMarginalizedJoint = fullJoint
+        # for eliminationVariable in eliminationVariables:
+        #     incrementallyMarginalizedJoint = eliminate(incrementallyMarginalizedJoint, eliminationVariable)
+
+        # fullJointOverQueryAndEvidence = incrementallyMarginalizedJoint
+
+        # normalize so that the probability sums to one
+        # the input factor contains only the query variables and the evidence variables, 
+        # both as unconditioned variables
+        queryConditionedOnEvidence = normalize(fullJoint)
+        # now the factor is conditioned on the evidence variables
+        print("calltrackinglist", callTrackingList)
+    
+        # the order is join on all variables, then eliminate on all elimination variables
+        return queryConditionedOnEvidence
         "*** END YOUR CODE HERE ***"
 
 

@@ -227,7 +227,6 @@ def eliminateWithCallTracking(callTrackingList=None):
 
                # Add the probability of this current probability that contains elim to the total
                 # print("elimVarProbability + previousProbability =", totalProbability, "+", factor.getProbability(assignmentDict))
-
                 totalProbability =  totalProbability + factor.getProbability(assignmentDict)
 
                 
