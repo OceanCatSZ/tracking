@@ -87,22 +87,51 @@ def joinFactors(factors: List[Factor]):
     Factor.conditionedVariables
     Factor.variableDomainsDict
     """
+    
 
-    # typecheck portion
-    setsOfUnconditioned = [set(factor.unconditionedVariables()) for factor in factors]
-    if len(factors) > 1:
-        intersect = functools.reduce(lambda x, y: x & y, setsOfUnconditioned)
-        if len(intersect) > 0:
-            print("Factor failed joinFactors typecheck: ", factor)
-            raise ValueError("unconditionedVariables can only appear in one factor. \n"
-                    + "unconditionedVariables: " + str(intersect) + 
-                    "\nappear in more than one input factor.\n" + 
-                    "Input factors: \n" +
-                    "\n".join(map(str, factors)))
+    #We turn (factors: dic) into list of factors for easier access
+    factors = list(factors) 
+    print("factor form: Factor{[unconditioned vars}, {conditioned vars}, [dict(varaible domains] \n", factors)
+    
+    # Create sets for unconditioned and conditioned variables
+    unconditionedVarSet = set()
+    conditionedVarSet = set()
 
+    #Assume that all factors have the same domain dictionary
+    variableDomainDict = factors[0].variableDomainsDict()
+    
+    # Update each set with the unconditional and conditioned variables from each factor
+    for factor in factors:
+        unconditionedVarSet.update(factor.unconditionedVariables())
+        conditionedVarSet.update(factor.conditionedVariables())
+
+    # The conditional set should not have anything that is in the unconditional set
+    conditionedVarSet = conditionedVarSet - unconditionedVarSet
+    
+    # Create the return factor
+    newFactor = Factor(unconditionedVarSet, conditionedVarSet, variableDomainDict)
+
+    for assignmentDict in newFactor.getAllPossibleAssignmentDicts():
+        probability = 1.0  
+        for factor in factors:
+            factorProbability = factor.getProbability(assignmentDict)
+            probability =  probability * factorProbability
+        newFactor.setProbability(assignmentDict, probability)
+
+    return newFactor
+    # if len(factors) > 1:
+    #     intersect = functools.reduce(lambda x, y: x & y, setsOfUnconditioned)
+    #     if len(intersect) > 0:
+    #         print("Factor failed joinFactors typecheck: ", factor)
+    #         raise ValueError("unconditionedVariables can only appear in one factor. \n"
+    #                 + "unconditionedVariables: " + str(intersect) + 
+    #                 "\nappear in more than one input factor.\n" + 
+    #                 "Input factors: \n" +
+    #                 "\n".join(map(str, factors)))
 
     "*** YOUR CODE HERE ***"
-    Factor.getAllPossibleAssignmentDicts()
+
+   # print(Factor.getAllPossibleAssignmentDicts(i))
     #Jason- Will get to this ASAP
     
     #raiseNotDefined()
