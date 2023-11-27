@@ -59,7 +59,7 @@ joinFactorsByVariable = joinFactorsByVariableWithCallTracking()
 ########### QUESTION 2  ###########
 ########### ########### ###########
 
-def joinFactors(factors: List[Factor]):
+def joinFactors(factors: dict):
     """
     Input factors is a list of factors.  
     
@@ -93,11 +93,11 @@ def joinFactors(factors: List[Factor]):
     factors = list(factors) 
     print("factor form: Factor{[unconditioned vars}, {conditioned vars}, [dict(varaible domains] \n", factors)
     
-    # Create sets for unconditioned and conditioned variables
+    # Create sets for unconditioned and conditioned variables to create our new factor
     unconditionedVarSet = set()
     conditionedVarSet = set()
 
-    #Assume that all factors have the same domain dictionary
+    #Assume that all factors have the same domain dictionary per the directions above
     variableDomainDict = factors[0].variableDomainsDict()
     
     # Update each set with the unconditional and conditioned variables from each factor
@@ -108,17 +108,22 @@ def joinFactors(factors: List[Factor]):
     # The conditional set should not have anything that is in the unconditional set
     conditionedVarSet = conditionedVarSet - unconditionedVarSet
     
-    # Create the return factor
     newFactor = Factor(unconditionedVarSet, conditionedVarSet, variableDomainDict)
-
-    for assignmentDict in newFactor.getAllPossibleAssignmentDicts():
-        probability = 1.0  
+    allAssignmentDicts = newFactor.getAllPossibleAssignmentDicts()
+    
+    for assignmentDict in allAssignmentDicts:
+        # For every combination of the factors (ex: Sun and Wet, Rain and Wet)
+        totalProbability = 1.0  
+        
         for factor in factors:
+            # Get the probability for each factor and mulitply it together
             factorProbability = factor.getProbability(assignmentDict)
-            probability =  probability * factorProbability
-        newFactor.setProbability(assignmentDict, probability)
+            totalProbability =  totalProbability * factorProbability
+            
+        newFactor.setProbability(assignmentDict, totalProbability)
 
     return newFactor
+
     # if len(factors) > 1:
     #     intersect = functools.reduce(lambda x, y: x & y, setsOfUnconditioned)
     #     if len(intersect) > 0:
@@ -130,9 +135,6 @@ def joinFactors(factors: List[Factor]):
     #                 "\n".join(map(str, factors)))
 
     "*** YOUR CODE HERE ***"
-
-   # print(Factor.getAllPossibleAssignmentDicts(i))
-    #Jason- Will get to this ASAP
     
     #raiseNotDefined()
     "*** END YOUR CODE HERE ***"
