@@ -43,7 +43,7 @@ def joinFactorsByVariableWithCallTracking(callTrackingList=None):
         # typecheck portion
         numVariableOnLeft = len([factor for factor in currentFactorsToJoin if joinVariable in factor.unconditionedVariables()])
         if numVariableOnLeft > 1:
-            print("Factor failed joinFactorsByVariable typecheck: ", factor)
+            # print("Factor failed joinFactorsByVariable typecheck: ", factor)
             raise ValueError("The joinBy variable can only appear in one factor as an \nunconditioned variable. \n" +  
                                "joinVariable: " + str(joinVariable) + "\n" +
                                ", ".join(map(str, [factor.unconditionedVariables() for factor in currentFactorsToJoin])))
@@ -111,6 +111,8 @@ def joinFactors(factors: dict):
     # print(unconditionedVarSet)
     # print(conditionedVarSet)
     conditionedVarSet = conditionedVarSet - unconditionedVarSet
+    # print(unconditionedVarSet)
+
     
     newFactor = Factor(unconditionedVarSet, conditionedVarSet, variableDomainDict)
     allAssignmentDicts = newFactor.getAllPossibleAssignmentDicts()
@@ -131,15 +133,15 @@ def joinFactors(factors: dict):
 
     return newFactor
 
-    # if len(factors) > 1:
-    #     intersect = functools.reduce(lambda x, y: x & y, setsOfUnconditioned)
-    #     if len(intersect) > 0:
-    #         print("Factor failed joinFactors typecheck: ", factor)
-    #         raise ValueError("unconditionedVariables can only appear in one factor. \n"
-    #                 + "unconditionedVariables: " + str(intersect) + 
-    #                 "\nappear in more than one input factor.\n" + 
-    #                 "Input factors: \n" +
-    #                 "\n".join(map(str, factors)))
+    if len(factors) > 1:
+        intersect = functools.reduce(lambda x, y: x & y, setsOfUnconditioned)
+        if len(intersect) > 0:
+            print("Factor failed joinFactors typecheck: ", factor)
+            raise ValueError("unconditionedVariables can only appear in one factor. \n"
+                    + "unconditionedVariables: " + str(intersect) + 
+                    "\nappear in more than one input factor.\n" + 
+                    "Input factors: \n" +
+                    "\n".join(map(str, factors)))
 
     "*** YOUR CODE HERE ***"
     
@@ -194,8 +196,8 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
         "*** YOUR CODE HERE ***"
-        print("original factor", factor)
-        print("variable to eliminate", eliminationVariable)
+        # print("original factor", factor)
+        # print("variable to eliminate", eliminationVariable)
         
         unconditionedVarSet = factor.unconditionedVariables()
         print("old unconditioned", unconditionedVarSet)
@@ -207,26 +209,23 @@ def eliminateWithCallTracking(callTrackingList=None):
         
         varDomainDict = factor.variableDomainsDict()
         print("varDomainDict", varDomainDict)
-      
-        newFactor = Factor(unconditionedVarSet, factor.conditionedVariables(), varDomainDict)
-
         
+        newFactor = Factor(unconditionedVarSet, factor.conditionedVariables(), varDomainDict)
         allAssignmentDicts = factor.getAllPossibleAssignmentDicts()
         #Get all possible combinations for the old factor
         for assignmentDict in allAssignmentDicts:
-            # print(assignmentDict)
+            print(assignmentDict)
             # For every combination of the factors (ex:Sun and Wet, Rain and Wet etc.)
-            totalProbability = 0.0  
-            # Initialize to 0.0- addition identity
+            totalProbability = 0
             domainsWithElim = varDomainDict[eliminationVariable]
             for elimVar in (domainsWithElim):
                 # For every domain with elimVar, we add up the total probability
-                # print("elimVar",elimVar)
+                print("elimVar",elimVar)
 
                 assignmentDict[eliminationVariable] = elimVar
 
                # Add the probability of this current probability that contains elim to the total
-                # print("elimVarProbability + previousProbability =", totalProbability, "+", factor.getProbability(assignmentDict))
+                print("elimVarProbability + previousProbability =", totalProbability, "+", factor.getProbability(assignmentDict))
                 totalProbability =  totalProbability + factor.getProbability(assignmentDict)
 
                 

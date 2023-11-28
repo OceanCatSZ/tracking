@@ -219,11 +219,7 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             eliminationOrder = sorted(list(eliminationVariables))
 
         "*** YOUR CODE HERE ***"
-   
-        # joinFactorsByVariable = joinFactorsByVariableWithCallTracking(callTrackingList)
-        # eliminate = eliminateWithCallTracking(callTrackingList)
 
-        
         currentFactorsList = bayesNet.getAllCPTsWithEvidence(evidenceDict)
 
         # variable elimination interleaves join and eliminate by iterating over all the hidden variables and 
@@ -392,8 +388,9 @@ class DiscreteDistribution(dict):
         myList = (self.copy())
         
         sum = self.total()
-        for prob in self.keys():
-            self[prob] = self[prob]/sum
+        if sum!=0:
+            for prob in self.keys():
+                self[prob] = self[prob]/sum
         "*** END YOUR CODE HERE ***"
 
     def sample(self):
@@ -418,13 +415,14 @@ class DiscreteDistribution(dict):
         0.0
         """
         "*** YOUR CODE HERE ***"
-        cumSum = self.total()
-        randomNum = random.random() * cumSum
+        sum = self.total()
+        randomWeight = random.randrange(0, sum)
         cumWeight = 0
         for key, curWeight in self.items():
             cumWeight += curWeight
-            if cumWeight > randomNum:
-                return key
+            if cumWeight <= randomWeight:
+                continue
+            return key
         
         "*** END YOUR CODE HERE ***"
 
@@ -620,7 +618,13 @@ class ExactInference(InferenceModule):
         position is known.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        allPostions = self.allPositions
+    
+        for pos in allPostions:
+            pacmanPosition = gameState.getPacmanPosition()
+            jailPosition = self.getJailPosition()
+            self.beliefs[pos] =  self.getObservationProb(observation, pacmanPosition, pos, jailPosition)
+
         "*** END YOUR CODE HERE ***"
         self.beliefs.normalize()
     
