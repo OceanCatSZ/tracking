@@ -418,12 +418,14 @@ class DiscreteDistribution(dict):
         0.0
         """
         "*** YOUR CODE HERE ***"
-        randomIndex = random.randrange(0, (len(self.keys())))
-        dicAsList = list(self)
-        key = dicAsList[randomIndex]
-        self[key] = (self[key])/1
+        cumSum = self.total()
+        randomNum = random.random() * cumSum
+        cumWeight = 0
+        for key, curWeight in self.items():
+            cumWeight += curWeight
+            if cumWeight > randomNum:
+                return key
         
-        return self[key]
         "*** END YOUR CODE HERE ***"
 
 
