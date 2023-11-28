@@ -209,7 +209,7 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
         joinFactorsByVariable
         joinFactors
         """
-        callTrackingList = []
+
         # this is for autograding -- don't modify
         joinFactorsByVariable = joinFactorsByVariableWithCallTracking(callTrackingList)
         eliminate             = eliminateWithCallTracking(callTrackingList)
@@ -484,12 +484,6 @@ class InferenceModule:
         """
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
         """
-        if noisyDistance == None:
-            if ghostPosition == jailPosition:
-                return 1
-            return 0
-        if ghostPosition==jailPosition:
-            return 0
         "*** YOUR CODE HERE ***"
         if noisyDistance == None and ghostPosition == jailPosition:
             return 1
@@ -611,12 +605,7 @@ class ExactInference(InferenceModule):
         position is known.
         """
         "*** YOUR CODE HERE ***"
-        allPostions = self.allPositions
-        for pos in allPostions:
-            pacmanPosition = gameState.getPacmanPosition()
-            jailPosition = self.getJailPosition()
-            self.beliefs[pos] =  self.getObservationProb(observation, pacmanPosition, pos, jailPosition)
-
+        raiseNotDefined()
         "*** END YOUR CODE HERE ***"
         self.beliefs.normalize()
     
