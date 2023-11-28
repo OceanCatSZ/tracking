@@ -219,7 +219,8 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             eliminationOrder = sorted(list(eliminationVariables))
 
         "*** YOUR CODE HERE ***"
-        evid = bayesNet.getAllCPTsWithEvidence(evidenceDict)
+        evid = bayesNet.getAllCPTsWithEvidence(evidenceDict) # get the evidence
+        # eliminate the variables in the evidence
         for i in eliminationOrder:
             evid, facjoined = joinFactorsByVariable(evid, i)
             if len(facjoined.unconditionedVariables()) > 1:
@@ -367,7 +368,13 @@ class DiscreteDistribution(dict):
         {}
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        tot = self.total()
+        if tot == 0:
+            return
+        else:
+            for i in self:
+                self.update({i: self[i] / tot})
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
     def sample(self):
@@ -392,7 +399,18 @@ class DiscreteDistribution(dict):
         0.0
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        self.normalize()
+        key = None
+        ran = random.random()
+        cur = 0
+        for i in self:
+            cur += self[i]
+            if ran < cur:
+                key = i
+                return key
+        return key
+        
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
 
@@ -467,7 +485,14 @@ class InferenceModule:
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        if noisyDistance == None and ghostPosition == jailPosition:
+            return 1
+        if noisyDistance == None or ghostPosition == jailPosition:
+            return 0
+        trueDistance = manhattanDistance(pacmanPosition, ghostPosition)
+        noisyverstrue = busters.getObservationProbability(noisyDistance, trueDistance)
+        return noisyverstrue
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
     def setGhostPosition(self, gameState, ghostPosition, index):
