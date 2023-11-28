@@ -619,7 +619,6 @@ class ExactInference(InferenceModule):
         """
         "*** YOUR CODE HERE ***"
         allPostions = self.allPositions
-    
         for pos in allPostions:
             pacmanPosition = gameState.getPacmanPosition()
             jailPosition = self.getJailPosition()
