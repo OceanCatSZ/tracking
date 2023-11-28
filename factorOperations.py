@@ -102,7 +102,24 @@ def joinFactors(factors: List[Factor]):
 
 
     "*** YOUR CODE HERE ***"
-    Factor.getAllPossibleAssignmentDicts()
+    factors = list(factors)
+    uncondvarset = set()
+    condvarset = set()
+    vardomdict = factors[0].variableDomainsDict()
+    for i in factors:
+        cond = i.conditionedVariables()
+        uncond = i.unconditionedVariables()
+        uncondvarset.update(uncond)
+        condvarset.update(cond)
+    condvarset -= uncondvarset
+    returnfactor = Factor(uncondvarset, condvarset, vardomdict)
+    for j in returnfactor.getAllPossibleAssignmentDicts():
+        prob = 1
+        for i in factors:
+            jp = i.getProbability(j)
+            prob *= jp
+        returnfactor.setProbability(j, prob)
+    return returnfactor
     
     #raiseNotDefined()
     "*** END YOUR CODE HERE ***"
@@ -155,9 +172,23 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        uncond = factor.unconditionedVariables()
+        elim = {eliminationVariable}
+        cond = factor.conditionedVariables()
+        uncond -= elim
+        vardomdic = factor.variableDomainsDict()
+        refac = Factor(uncond, cond, vardomdic)
+        dic = factor.getAllPossibleAssignmentDicts()
+        for i in dic:
+            totprob = 0
+            elimdom = vardomdic[eliminationVariable]
+            for j in elimdom:
+                i[eliminationVariable] = j
+                totprob += factor.getProbability(i)
+            refac.setProbability(i, totprob)
+        return refac
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
-
     return eliminate
 
 eliminate = eliminateWithCallTracking()
