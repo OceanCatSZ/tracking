@@ -236,7 +236,7 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
                 eliminatedFactor = eliminate(resultingFactor, elimVar)
                 currentFactorsList.append(eliminatedFactor)
             # else:
-            #        currentFactorsList.pop()
+            #   currentFactorsList.pop()
         # currentFactorsList should contain the connected components of the graph now as factors, must join the connected components
         fullJoint = joinFactors(currentFactorsList)
         print("full joint", fullJoint)
@@ -388,7 +388,12 @@ class DiscreteDistribution(dict):
         {}
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        # print("This is what you have", self.copy)
+        myList = (self.copy())
+        
+        sum = self.total()
+        for prob in self.keys():
+            self[prob] = self[prob]/sum
         "*** END YOUR CODE HERE ***"
 
     def sample(self):
@@ -413,7 +418,12 @@ class DiscreteDistribution(dict):
         0.0
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        randomIndex = random.randrange(0, (len(self.keys())))
+        dicAsList = list(self)
+        key = dicAsList[randomIndex]
+        self[key] = (self[key])/1
+        
+        return self[key]
         "*** END YOUR CODE HERE ***"
 
 
@@ -488,6 +498,7 @@ class InferenceModule:
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
         """
         "*** YOUR CODE HERE ***"
+        
         raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
