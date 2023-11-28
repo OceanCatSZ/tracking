@@ -43,7 +43,7 @@ def joinFactorsByVariableWithCallTracking(callTrackingList=None):
         # typecheck portion
         numVariableOnLeft = len([factor for factor in currentFactorsToJoin if joinVariable in factor.unconditionedVariables()])
         if numVariableOnLeft > 1:
-            print("Factor failed joinFactorsByVariable typecheck: ", factor)
+            # print("Factor failed joinFactorsByVariable typecheck: ", factor)
             raise ValueError("The joinBy variable can only appear in one factor as an \nunconditioned variable. \n" +  
                                "joinVariable: " + str(joinVariable) + "\n" +
                                ", ".join(map(str, [factor.unconditionedVariables() for factor in currentFactorsToJoin])))
@@ -59,7 +59,8 @@ joinFactorsByVariable = joinFactorsByVariableWithCallTracking()
 ########### QUESTION 2  ###########
 ########### ########### ###########
 
-def joinFactors(factors: List[Factor]):
+def joinFactors(factors: dict):
+    # Jason
     """
     Input factors is a list of factors.  
     
@@ -87,9 +88,51 @@ def joinFactors(factors: List[Factor]):
     Factor.conditionedVariables
     Factor.variableDomainsDict
     """
+    
 
-    # typecheck portion
-    setsOfUnconditioned = [set(factor.unconditionedVariables()) for factor in factors]
+    # We turn (factors: dic) into list of factors for easier access
+    factors = list(factors) 
+    # print("List---factor form: Factor{[unconditioned vars}, {conditioned vars}, [dict(varaible domains] \n", factors)
+    
+    # Create sets for unconditioned and conditioned variables to create our new factor
+    unconditionedVarSet = set()
+    conditionedVarSet = set()
+
+    # Assume that all factors have the same domain dictionary per the directions above
+    variableDomainDict = factors[0].variableDomainsDict()
+    # print(variableDomainDict)
+    
+    # Update each set with the unconditional and conditioned variables from each factor
+    for factor in factors:
+        unconditionedVarSet.update(factor.unconditionedVariables())
+        conditionedVarSet.update(factor.conditionedVariables())
+
+    # The conditional set should not have anything that is in the unconditional set
+    # print(unconditionedVarSet)
+    # print(conditionedVarSet)
+    conditionedVarSet = conditionedVarSet - unconditionedVarSet
+    # print(unconditionedVarSet)
+
+    
+    newFactor = Factor(unconditionedVarSet, conditionedVarSet, variableDomainDict)
+    allAssignmentDicts = newFactor.getAllPossibleAssignmentDicts()
+    
+    for assignmentDict in allAssignmentDicts:
+        # print("assignmentDic", assignmentDict)
+        # For every combination of the factors (ex:Sun and Wet, Rain and Wet etc.)
+        totalProbability = 1.0  
+        # Initialize to one- multiplication identity
+        
+        for factor in factors:
+            # Get the probability for each factor ex. Sun and multiply it together with existing probability 
+            # print("Factor", factor)
+            factorProbability = factor.getProbability(assignmentDict)
+            totalProbability =  totalProbability * factorProbability
+            
+        newFactor.setProbability(assignmentDict, totalProbability)
+
+    return newFactor
+
     if len(factors) > 1:
         intersect = functools.reduce(lambda x, y: x & y, setsOfUnconditioned)
         if len(intersect) > 0:
@@ -99,7 +142,6 @@ def joinFactors(factors: List[Factor]):
                     "\nappear in more than one input factor.\n" + 
                     "Input factors: \n" +
                     "\n".join(map(str, factors)))
-
 
     "*** YOUR CODE HERE ***"
     factors = list(factors)
