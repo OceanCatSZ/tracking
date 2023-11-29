@@ -696,9 +696,6 @@ class ParticleFilter(InferenceModule):
             self.particles.append(legalPos[i])
             
         self.particles.sort()
-        
-        print("done!")
-            
             
         #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
