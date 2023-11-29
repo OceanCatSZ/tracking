@@ -667,19 +667,39 @@ class ParticleFilter(InferenceModule):
         distributed across positions in order to ensure a uniform prior. Use
         self.particles for the list of particles.
         """
+        # self.particles = []
+        # "*** YOUR CODE HERE ***"
+        # legalPos = self.legalPositions
+        # lstsize = len(legalPos)
+        # numberOfParticles = self.numParticles
+        # unitParticle = math.floor(numberOfParticles/lstsize)
+        # remain = numberOfParticles%lstsize
+        # for i in lstsize:
+        #     carry = 0
+        #     if remain > 0:
+        #         carry = 1
+        #         remain -= 1
+        #     self.particles.append(unitParticle + carry)
+        
         self.particles = []
         "*** YOUR CODE HERE ***"
-        legalPos = self.legalPositions
-        lstsize = len(legalPos)
+        legalPos = self.legalPositions      
+        legalPosSize = len(legalPos)
         numberOfParticles = self.numParticles
-        unitParticle = math.floor(numberOfParticles/lstsize)
-        remain = numberOfParticles%lstsize
-        for i in range(lstsize):
-            carry = 0
-            if remain > 0:
-                carry = 1
-                remain -= 1
-            self.particles.append(unitParticle + carry)
+        numLeft= numberOfParticles%legalPosSize
+        numTimes = numberOfParticles//legalPosSize
+        
+        self.particles = legalPos * numTimes
+        
+        i = 0
+        while (i < numLeft):
+            self.particles.append(legalPos[i])
+            
+        self.particles.sort()
+        
+        print("done!")
+            
+            
         #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
