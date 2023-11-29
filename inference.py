@@ -735,20 +735,20 @@ class ParticleFilter(InferenceModule):
         the DiscreteDistribution may be useful.
         """
         "*** YOUR CODE HERE ***"
-        # pacmanPosition = gameState.getPacmanPosition()
-        # jailPosition = self.getJailPosition()
-        # obs = DiscreteDistribution()
-        # for pos in self.particles:
-        #     prob = self.getObservationProb(observation, pacmanPosition, pos, jailPosition)
-        #     obs[pos] += prob
-        # if obs.total() == 0:
-        #     self.initializeUniformly(gameState)
-        # else:
-        #     obs.normalize()
-        #     self.beliefs = obs
-        #     for i in range(self.numParticles):
-        #         self.particles[i] = obs.sample()
-        raiseNotDefined()
+        pacmanPosition = gameState.getPacmanPosition()
+        jailPosition = self.getJailPosition()
+        obs = DiscreteDistribution()
+        for pos in self.particles:
+            prob = self.getObservationProb(observation, pacmanPosition, pos, jailPosition)
+            obs[pos] += prob
+        if obs.total() == 0:
+            self.initializeUniformly(gameState)
+        else:
+            obs.normalize()
+            self.beliefs = obs
+            for i in range(self.numParticles):
+                self.particles[i] = obs.sample()
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
     
     ########### ########### ###########
@@ -761,11 +761,11 @@ class ParticleFilter(InferenceModule):
         gameState.
         """
         "*** YOUR CODE HERE ***"
-        # for i in range(self.numParticles):
-        #     oldpos = self.particles[i]
-        #     newPosDist = self.getPositionDistribution(gameState, oldpos)
-        #     self.particles[i] = newPosDist.sample()
-        raiseNotDefined()
+        for i in range(self.numParticles):
+            oldpos = self.particles[i]
+            newPosDist = self.getPositionDistribution(gameState, oldpos)
+            self.particles[i] = newPosDist.sample()
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
 
@@ -846,7 +846,23 @@ class JointParticleFilter(ParticleFilter):
         the DiscreteDistribution may be useful.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        pacmanPosition = gameState.getPacmanPosition()
+        obs = DiscreteDistribution()
+        for pos in self.particles:
+            prob = 1
+            for i in range(self.numGhosts):
+                jailPosition = self.getJailPosition(i)
+                # Weight each entire sample by the likelihood of the evidence conditioned on the sample
+                prob *= self.getObservationProb(observation[i], pacmanPosition, pos[i], jailPosition)
+            obs[pos] += prob
+        if obs.total() == 0:
+            self.initializeUniformly(gameState)
+        else:
+            obs.normalize()
+            self.beliefs = obs
+            for i in range(self.numParticles):
+                self.particles[i] = obs.sample()
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
     ########### ########### ###########
@@ -861,10 +877,12 @@ class JointParticleFilter(ParticleFilter):
         newParticles = []
         for oldParticle in self.particles:
             newParticle = list(oldParticle)  # A list of ghost positions
-
             # now loop through and update each entry in newParticle...
             "*** YOUR CODE HERE ***"
-            raiseNotDefined()
+            for i in range(self.numGhosts):
+                newPosDist = self.getPositionDistribution(gameState, newParticle, i, self.ghostAgents[i])
+                newParticle[i] = newPosDist.sample()
+            #raiseNotDefined()
             """*** END YOUR CODE HERE ***"""
             newParticles.append(tuple(newParticle))
         self.particles = newParticles
