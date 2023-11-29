@@ -876,7 +876,7 @@ class JointParticleFilter(ParticleFilter):
         """
         newParticles = []
         for oldParticle in self.particles:
-            newParticle = list(oldParticle)  # A list of ghost positions
+            newParticle = list(oldParticle)  # A list of previous ghost positions
             # now loop through and update each entry in newParticle...
             "*** YOUR CODE HERE ***"
             for i in range(self.numGhosts):
