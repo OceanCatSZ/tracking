@@ -761,7 +761,18 @@ class ParticleFilter(InferenceModule):
         gameState.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        obs = DiscreteDistribution()
+        belief = self.getBeliefDistribution()
+        for prevpos in self.particles:
+            newPosDist = self.getPositionDistribution(gameState, prevpos)
+            prevprob = belief[prevpos]
+            for newpos in newPosDist.keys():
+                newprob = newPosDist[newpos]
+                obs[newpos] += prevprob * newprob
+        self.beliefs = obs
+        for i in range(self.numParticles):
+            self.particles[i] = obs.sample()
+        # raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
 
