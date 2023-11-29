@@ -628,7 +628,14 @@ class ExactInference(InferenceModule):
         current position is known.
         """
         "*** YOUR CODE HERE ***"
-        
+        obs = 
+        allPostions = self.allPositions
+        for prevpos in allPostions:
+            newPosDist = self.getPositionDistribution(gameState, prevpos)
+            prevprob = self.beliefs[prevpos]
+            for newpos in newPosDist.keys():
+                newprob = newPosDist[newpos]
+                self.beliefs[newpos] += prevprob * newprob
         #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
