@@ -674,7 +674,7 @@ class ParticleFilter(InferenceModule):
         numberOfParticles = self.numParticles
         unitParticle = math.floor(numberOfParticles/lstsize)
         remain = numberOfParticles%lstsize
-        for i in lstsize:
+        for i in range(lstsize):
             carry = 0
             if remain > 0:
                 carry = 1
@@ -687,12 +687,16 @@ class ParticleFilter(InferenceModule):
         """
         Return the agent's current belief state, a distribution over ghost
         locations conditioned on all evidence and time passage. This method
-        essentially converts a list of particles into a belief distribution.ss
+        essentially converts a list of particles into a belief distribution.
 
         This function should return a normalized distribution.
         """
         "*** YOUR CODE HERE ***"
-        
+        belief = DiscreteDistribution()
+        for i in self.particles:
+            belief[i] += 1
+        belief.normalize()
+        return belief
         #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
     
