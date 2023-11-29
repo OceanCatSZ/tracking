@@ -735,20 +735,20 @@ class ParticleFilter(InferenceModule):
         the DiscreteDistribution may be useful.
         """
         "*** YOUR CODE HERE ***"
-        pacmanPosition = gameState.getPacmanPosition()
-        jailPosition = self.getJailPosition()
-        obs = DiscreteDistribution()
-        for pos in self.particles:
-            prob = self.getObservationProb(observation, pacmanPosition, pos, jailPosition)
-            obs[pos] += prob
-        if obs.total() == 0:
-            self.initializeUniformly(gameState)
-        else:
-            obs.normalize()
-            self.beliefs = obs
-            for i in range(self.numParticles):
-                self.particles[i] = obs.sample()
-        #raiseNotDefined()
+        # pacmanPosition = gameState.getPacmanPosition()
+        # jailPosition = self.getJailPosition()
+        # obs = DiscreteDistribution()
+        # for pos in self.particles:
+        #     prob = self.getObservationProb(observation, pacmanPosition, pos, jailPosition)
+        #     obs[pos] += prob
+        # if obs.total() == 0:
+        #     self.initializeUniformly(gameState)
+        # else:
+        #     obs.normalize()
+        #     self.beliefs = obs
+        #     for i in range(self.numParticles):
+        #         self.particles[i] = obs.sample()
+        raiseNotDefined()
         "*** END YOUR CODE HERE ***"
     
     ########### ########### ###########
@@ -761,11 +761,11 @@ class ParticleFilter(InferenceModule):
         gameState.
         """
         "*** YOUR CODE HERE ***"
-        for i in range(self.numParticles):
-            oldpos = self.particles[i]
-            newPosDist = self.getPositionDistribution(gameState, oldpos)
-            self.particles[i] = newPosDist.sample()
-        # raiseNotDefined()
+        # for i in range(self.numParticles):
+        #     oldpos = self.particles[i]
+        #     newPosDist = self.getPositionDistribution(gameState, oldpos)
+        #     self.particles[i] = newPosDist.sample()
+        raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
 
@@ -799,7 +799,18 @@ class JointParticleFilter(ParticleFilter):
         """
         self.particles = []
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        possiblePermutation = list(itertools.product(self.legalPositions, repeat = self.numGhosts))
+        random.shuffle(possiblePermutation)
+        lstsize = len(possiblePermutation)
+        iterations = math.floor(self.numParticles/lstsize) # fit the permutations into particle list
+        remainder = self.numParticles % lstsize
+            
+        for i in range(iterations):
+            for j in range(lstsize):
+                self.particles.append(possiblePermutation[j])
+        for i in range(remainder):
+            self.particles.append(possiblePermutation[i])
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
     def addGhostAgent(self, agent):
