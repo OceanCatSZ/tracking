@@ -694,6 +694,7 @@ class ParticleFilter(InferenceModule):
         i = 0
         while (i < numLeft):
             self.particles.append(legalPos[i])
+            i += 1
             
         self.particles.sort()
             
@@ -736,11 +737,17 @@ class ParticleFilter(InferenceModule):
         "*** YOUR CODE HERE ***"
         pacmanPosition = gameState.getPacmanPosition()
         jailPosition = self.getJailPosition()
-        allPostions = self.allPositions
-        for pos in allPostions:
+        obs = DiscreteDistribution()
+        for pos in self.particles:
             prob = self.getObservationProb(observation, pacmanPosition, pos, jailPosition)
-            self.beliefs[pos] *= prob
-        self.beliefs.normalize()
+            obs[pos] += prob
+        if obs.total() == 0:
+            self.initializeUniformly(gameState)
+        else:
+            obs.normalize()
+            self.beliefs = obs
+            for i in range(self.numParticles):
+                self.particles[i] = obs.sample()
         #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
     
