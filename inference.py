@@ -12,6 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
+import math
 import random
 import itertools
 from typing import List, Dict, Tuple
@@ -668,19 +669,31 @@ class ParticleFilter(InferenceModule):
         """
         self.particles = []
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        legalPos = self.legalPositions
+        lstsize = len(legalPos)
+        numberOfParticles = self.numParticles
+        unitParticle = math.floor(numberOfParticles/lstsize)
+        remain = numberOfParticles%lstsize
+        for i in lstsize:
+            carry = 0
+            if remain > 0:
+                carry = 1
+                remain -= 1
+            self.particles.append(unitParticle + carry)
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
     def getBeliefDistribution(self):
         """
         Return the agent's current belief state, a distribution over ghost
         locations conditioned on all evidence and time passage. This method
-        essentially converts a list of particles into a belief distribution.
+        essentially converts a list of particles into a belief distribution.ss
 
         This function should return a normalized distribution.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        
+        #raiseNotDefined()
         "*** END YOUR CODE HERE ***"
     
     ########### ########### ###########
